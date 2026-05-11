@@ -8,7 +8,7 @@ from typing import Optional
 class BaseCamera(abc.ABC):
     """Abstract base class for camera implementations"""
     
-    def __init__(self, rtsp_url: str = "rtsp://192.168.31.178:8554/test", width: int = 1920, height: int = 1200, ffmpeg_command: Optional[list] = None):
+    def __init__(self, rtsp_url: str = "rtsp://127.0.0.1:8554/test", width: int = 1920, height: int = 1200, ffmpeg_command: Optional[list] = None):
         self.rtsp_url = rtsp_url
         self.width = width
         self.height = height

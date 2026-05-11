@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [react()],
     server: {
         port: 8501,
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         strictPort: true,
         cors: true,
         fs: {
@@ -15,7 +15,7 @@ export default defineConfig({
         proxy: {
             // Agent Server (Chat)
             '/api': {
-                target: 'http://192.168.31.176:8001',
+                target: 'http://127.0.0.1:8001',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '')
             }

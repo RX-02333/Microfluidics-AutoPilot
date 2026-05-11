@@ -8,7 +8,7 @@ Ensure UI server is running on port 8501
 import requests
 import time
 
-UI_URL = "http://192.168.31.176:8501"
+UI_URL = "http://127.0.0.1:8501"
 
 def _send_ui_message(message, msg_type="system", ui_port=8501):
     """Exactly identical to _send_ui_message in logic.py"""

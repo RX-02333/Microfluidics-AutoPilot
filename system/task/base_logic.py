@@ -342,7 +342,7 @@ class BaseTaskLogic:
             # Agent Server in background thread
             def run_agent():
                 cfg = self.config.get('server', {})
-                host = cfg.get('host', '0.0.0.0')
+                host = cfg.get('host', '127.0.0.1')
                 port = cfg.get('agent_port', 8001)
                 print(f"Starting Agent Server on {host}:{port}")
                 uvicorn.run(self.agent_app, host=host, port=port)
@@ -352,7 +352,7 @@ class BaseTaskLogic:
             # Task API Server in main thread (blocking)
             app = self.create_api_app()
             cfg = self.config.get('server', {})
-            host = cfg.get('host', '0.0.0.0')
+            host = cfg.get('host', '127.0.0.1')
             port = cfg.get('api_port', 8002)
             print(f"Starting Task API Server on {host}:{port}")
             uvicorn.run(app, host=host, port=port)

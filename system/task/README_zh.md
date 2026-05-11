@@ -210,14 +210,14 @@ class BaseTaskLogic:
             # Agent Server (background thread)
             def run_agent():
                 cfg = self.config.get('server', {})
-                uvicorn.run(self.agent_app, host=cfg.get('host', '0.0.0.0'), port=cfg.get('agent_port', 8001))
+                uvicorn.run(self.agent_app, host=cfg.get('host', '127.0.0.1'), port=cfg.get('agent_port', 8001))
             threading.Thread(target=run_agent, daemon=True).start()
 
             # Task API Server (main thread, blocking)
             app = self.create_api_app()
 
             cfg = self.config.get('server', {})
-            uvicorn.run(app, host=cfg.get('host', '0.0.0.0'), port=cfg.get('api_port', 8002))
+            uvicorn.run(app, host=cfg.get('host', '127.0.0.1'), port=cfg.get('api_port', 8002))
         except KeyboardInterrupt:
             self.stop()
         except Exception as e:
@@ -413,11 +413,11 @@ notice:
 ```js
 proxy: {
     '/api': {  // → Agent Server
-        target: 'http://192.168.31.176:8001',
+        target: 'http://127.0.0.1:8001',
         rewrite: (path) => path.replace(/^\/api/, '')
     },
     '/control': {  // → Task API（如需要）
-        target: 'http://192.168.31.176:8002'
+        target: 'http://127.0.0.1:8002'
     }
 }
 ```

@@ -18,7 +18,7 @@ const App = () => {
             <div className="right-panel">
                 {/* Video Section */}
                 <div className="video-section">
-                    <VideoStream src="http://192.168.31.176:8889/test" />
+                    <VideoStream src="http://127.0.0.1:8889/test" />
                 </div>
 
                 {/* Vesicle Distribution Chart */}

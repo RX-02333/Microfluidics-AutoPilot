@@ -15,7 +15,7 @@ except ImportError:
 class ToupCamCamera(BaseCamera):
     """Implementation for ToupCam cameras"""
     
-    def __init__(self, rtsp_url="rtsp://192.168.31.178:8554/test", width=1920, height=1200, ffmpeg_command=None):
+    def __init__(self, rtsp_url="rtsp://127.0.0.1:8554/test", width=1920, height=1200, ffmpeg_command=None):
         super().__init__(rtsp_url, width, height, ffmpeg_command)
         self.hcam = None
         self.buf = None

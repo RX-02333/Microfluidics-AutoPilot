@@ -1,7 +1,7 @@
 {
     "camera": {
         "type": "toupcam",
-        "rtsp_url": "rtsp://192.168.31.176:8554/test",
+        "rtsp_url": "rtsp://127.0.0.1:8554/test",
         "ffmpeg_command": [
             "ffmpeg",
             "-y",
@@ -27,7 +27,7 @@
             "5000k",
             "-f",
             "rtsp",
-            "rtsp://192.168.31.176:8554/test"
+            "rtsp://127.0.0.1:8554/test"
         ]
     },
     "hardware": {
@@ -37,6 +37,6 @@
         "api_port": 8002,
         "agent_port": 8001,
         "frontend_port": 8501,
-        "host": "192.168.31.176"
+        "host": "127.0.0.1"
     }
 }

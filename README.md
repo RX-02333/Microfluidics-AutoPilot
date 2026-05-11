@@ -173,7 +173,7 @@ After selecting a model, configure the following parameters in the **Inference**
 ```json
 {
     "server": {
-        "host": "YOUR_SERVER_IP",    // Server IP (change to your machine's IP)
+        "host": "127.0.0.1",         // Local machine address
         "port": 8000                  // Dashboard port
     },
     "taskUi": {
@@ -190,7 +190,7 @@ After selecting a model, configure the following parameters in the **Inference**
 {
     "camera": {
         "type": "toupcam",            // Camera type
-        "rtsp_url": "rtsp://IP:8554/test"
+        "rtsp_url": "rtsp://127.0.0.1:8554/test"
     },
     "hardware": {
         "pressure_controller_port": "COM3"   // Pressure controller serial port
@@ -199,12 +199,17 @@ After selecting a model, configure the following parameters in the **Inference**
         "api_port": 8002,             // Task API port
         "agent_port": 8001,           // Agent Server port
         "frontend_port": 8501,        // Task UI dev server port
-        "host": "YOUR_SERVER_IP"      // Service binding IP
+        "host": "127.0.0.1"          // Local service binding IP
     }
 }
 ```
 
-> ⚠️ **You MUST change `host` to your machine's actual IP address on first deployment.**
+> The default network configuration is for local access only.
+> If another computer needs to access this system, change the following `127.0.0.1` values to the LAN IPv4 address of the computer running the system, for example `192.168.x.x`:
+> - `server.host` in `system/server/static/config.json`
+> - `camera.rtsp_url`, the RTSP URL inside `camera.ffmpeg_command`, and `server.host` in `tasks/common_config.json`
+> - `server.host` and proxy `target` addresses in each `tasks/*/ui/vite.config.js`
+> Also allow ports `8000`, `8001`, `8002`, `8501`, and `8554` through the firewall.
 
 ### Task Config
 
@@ -264,7 +269,7 @@ conda activate microfluidics
 python start_system.py
 ```
 
-Open `http://<YOUR_IP>:8000` in a browser to access the Microfluidics AutoPilot dashboard.
+Open `http://127.0.0.1:8000` in a browser to access the Microfluidics AutoPilot dashboard.
 
 ### Startup Flow
 

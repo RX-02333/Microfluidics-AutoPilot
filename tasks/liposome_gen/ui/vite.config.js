@@ -7,7 +7,7 @@ export default defineConfig({
     plugins: [react(), uiMessageApiPlugin()],
     server: {
         port: 8501,
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         strictPort: true,
         cors: true,
         fs: {
@@ -16,25 +16,25 @@ export default defineConfig({
         proxy: {
             // Agent Server (Chat & UI)
             '/api': {
-                target: 'http://192.168.31.176:8001',
+                target: 'http://127.0.0.1:8001',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '')
             },
             '/ui': {
-                target: 'http://192.168.31.176:8001',
+                target: 'http://127.0.0.1:8001',
                 changeOrigin: true
             },
             // Task API Server (Control & Status & Data)
             '/control': {
-                target: 'http://192.168.31.176:8002',
+                target: 'http://127.0.0.1:8002',
                 changeOrigin: true
             },
             '/status': {
-                target: 'http://192.168.31.176:8002',
+                target: 'http://127.0.0.1:8002',
                 changeOrigin: true
             },
             '/distribution': {
-                target: 'http://192.168.31.176:8002',
+                target: 'http://127.0.0.1:8002',
                 changeOrigin: true
             }
         }

@@ -174,7 +174,7 @@ npm install
 ```json
 {
     "server": {
-        "host": "服务器IP地址",   // 服务器 IP（改为本机 IP）
+        "host": "127.0.0.1",        // 本机地址
         "port": 8000                 // 主控仪表板端口
     },
     "taskUi": {
@@ -191,7 +191,7 @@ npm install
 {
     "camera": {
         "type": "toupcam",           // 相机类型
-        "rtsp_url": "rtsp://IP:8554/test"
+        "rtsp_url": "rtsp://127.0.0.1:8554/test"
     },
     "hardware": {
         "pressure_controller_port": "COM3"  // 压力控制器串口号
@@ -200,12 +200,17 @@ npm install
         "api_port": 8002,            // Task API 端口
         "agent_port": 8001,          // Agent Server 端口
         "frontend_port": 8501,       // Task UI 开发服务器端口
-        "host": "服务器IP地址"     // 服务绑定 IP
+        "host": "127.0.0.1"        // 本机服务绑定 IP
     }
 }
 ```
 
-> ⚠️ **首次部署必须修改 `host` 为本机实际 IP 地址。**
+> 默认网络配置仅用于本机访问。
+> 如果需要其他电脑访问本系统，请将以下位置的 `127.0.0.1` 改为运行本系统电脑的局域网 IPv4 地址，例如 `192.168.x.x`：
+> - `system/server/static/config.json` 中的 `server.host`
+> - `tasks/common_config.json` 中的 `camera.rtsp_url`、`camera.ffmpeg_command` 内的 RTSP 地址和 `server.host`
+> - 各个 `tasks/*/ui/vite.config.js` 中的 `server.host` 和代理 `target` 地址
+> 同时确认防火墙放行 `8000`、`8001`、`8002`、`8501`、`8554` 端口。
 
 ### Task 配置
 
@@ -265,7 +270,7 @@ conda activate microfluidics
 python start_system.py
 ```
 
-浏览器访问 `http://<你的IP>:8000` 打开 Microfluidics AutoPilot 仪表板。
+浏览器访问 `http://127.0.0.1:8000` 打开 Microfluidics AutoPilot 仪表板。
 
 ### 启动流程
 
