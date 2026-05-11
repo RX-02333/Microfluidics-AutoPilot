@@ -25,8 +25,8 @@ An LLM Agent-driven automated control system for microfluidic experiments. The s
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd new_system
+git clone https://github.com/RX-02333/Microfluidics-AutoPilot.git
+cd Microfluidics-AutoPilot
 ```
 
 ### 2. Python Environment
