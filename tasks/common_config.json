@@ -1,0 +1,42 @@
+{
+    "camera": {
+        "type": "toupcam",
+        "rtsp_url": "rtsp://192.168.31.176:8554/test",
+        "ffmpeg_command": [
+            "ffmpeg",
+            "-y",
+            "-f",
+            "rawvideo",
+            "-hwaccel",
+            "amf",
+            "-vcodec",
+            "rawvideo",
+            "-pix_fmt",
+            "gray",
+            "-s",
+            "1920x1200",
+            "-r",
+            "60",
+            "-i",
+            "-",
+            "-c:v",
+            "hevc_amf",
+            "-bf",
+            "0",
+            "-b:v",
+            "5000k",
+            "-f",
+            "rtsp",
+            "rtsp://192.168.31.176:8554/test"
+        ]
+    },
+    "hardware": {
+        "pressure_controller_port": "COM3"
+    },
+    "server": {
+        "api_port": 8002,
+        "agent_port": 8001,
+        "frontend_port": 8501,
+        "host": "192.168.31.176"
+    }
+}

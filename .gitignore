@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build output
+tasks/*/ui/dist/
+
+# Logs
+*.log
+
+# TensorRT engines (too large, machine-specific)
+*.engine
+
+# Misc
+.env

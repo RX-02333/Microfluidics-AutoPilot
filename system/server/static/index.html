@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microfluidics AutoPilot</title>
+    <script src="./tailwindcss.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Spinner Styles */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sidebar collapse animation */
+        .sidebar {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 0 !important;
+            min-width: 0 !important;
+            padding: 0 !important;
+            opacity: 0;
+        }
+
+        /* Toggle button */
+        .toggle-btn {
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 48px;
+            background: rgba(59, 130, 246, 0.9);
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(59, 130, 246, 1);
+            width: 28px;
+        }
+
+        .toggle-btn svg {
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn.collapsed svg {
+            transform: rotate(180deg);
+        }
+
+        /* Task card styles */
+        .task-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .task-card.running {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.05);
+        }
+    </style>
+</head>
+
+<body class="h-screen flex flex-col p-4">
+    <header class="mb-4 flex items-center gap-3">
+        <img src="./logo.png" alt="Logo" class="w-10 h-10 object-contain rounded-full">
+        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            Microfluidics AutoPilot
+        </h1>
+    </header>
+
+    <main class="flex-1 flex gap-4 relative">
+        <!-- Task List Sidebar -->
+        <div id="sidebar" class="sidebar w-1/5 min-w-[240px] glass rounded-xl p-4 flex flex-col relative">
+            <h2 class="text-lg font-semibold mb-3 text-blue-300">Available Tasks</h2>
+            <div id="taskList" class="space-y-2 overflow-y-auto pr-2">
+                <div class="text-gray-500 text-sm animate-pulse">Scanning tasks...</div>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <div id="toggleBtn" class="toggle-btn" onclick="toggleSidebar()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="white">
+                <path d="M4 2L8 6L4 10" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <!-- Active Task Container (Full Screen) -->
+        <div class="flex-1 glass rounded-xl overflow-hidden flex flex-col relative">
+            <!-- Title (shows when no task active) -->
+            <div id="taskTitle" class="px-4 py-3 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-700">Active Task</h2>
+            </div>
+
+            <div id="activeTaskContainer" class="flex-1 bg-white flex items-center justify-center relative">
+                <!-- Empty State -->
+                <div id="placeholderText" class="text-center px-8">
+                    <svg class="w-20 h-20 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p class="text-gray-500 text-base font-medium mb-2">No task active</p>
+                    <p class="text-gray-400 text-sm">Select a task from the left panel to get started</p>
+                </div>
+
+                <!-- Loading Spinner Container -->
+                <div id="loadingSpinner"
+                    class="hidden flex-col items-center gap-3 absolute inset-0 justify-center bg-white/90 backdrop-blur-sm z-10">
+                    <div class="spinner"></div>
+                    <div class="text-blue-600 text-sm animate-pulse font-medium">Initializing Task UI...</div>
+                    <div id="retryCount" class="text-xs text-gray-500"></div>
+                </div>
+
+                <iframe id="taskFrame" class="w-full h-full hidden border-0 z-0" src=""></iframe>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let CONFIG = null;
+        let sidebarCollapsed = false;
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleBtn');
+            sidebarCollapsed = !sidebarCollapsed;
+
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleBtn.classList.add('collapsed');
+                toggleBtn.style.left = '8px';
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleBtn.classList.remove('collapsed');
+                toggleBtn.style.left = '-12px';
+            }
+        }
+
+        // Load configuration file
+        async function loadConfig() {
+            try {
+                const res = await fetch('./config.json');
+                CONFIG = await res.json();
+                console.log('Config loaded:', CONFIG);
+            } catch (e) {
+                console.error("Failed to load config", e);
+                // Use default configuration
+                CONFIG = {
+                    server: { host: "localhost", port: 8000 },
+                    taskUi: { port: 8501 }
+                };
+            }
+        }
+
+        async function fetchTasks() {
+            try {
+                const res = await fetch('/api/tasks');
+                const tasks = await res.json();
+                renderTasks(tasks);
+            } catch (e) {
+                console.error("Failed to fetch tasks", e);
+            }
+        }
+
+        function renderTasks(tasks) {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+
+            let runningTask = null;
+
+            tasks.forEach(task => {
+                const el = document.createElement('div');
+                const isRunning = task.status === 'running';
+
+                // Track running task for auto-restore
+                if (isRunning) {
+                    runningTask = task;
+                }
+
+                el.className = `task-card p-3 rounded-lg cursor-pointer ${isRunning ? 'running' : ''}`;
+                el.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-bold text-sm ${isRunning ? 'text-emerald-700' : 'text-gray-800'}">${task.name}</h3>
+                        ${isRunning ? '<div class="flex gap-2"><span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 font-medium">Running</span></div>' : ''}
+                    </div>
+                    <p class="text-xs text-gray-600 line-clamp-2">${task.description}</p>
+                `;
+                el.onclick = () => startTask(task.id);
+                list.appendChild(el);
+            });
+
+            // Auto-restore running task UI on page load
+            if (runningTask && !window.taskUIRestored) {
+                window.taskUIRestored = true;
+                console.log(`Auto-restoring UI for running task: ${runningTask.id}`);
+                loadTaskFrontend(runningTask.id);
+            }
+        }
+
+        async function startTask(taskId) {
+            if (!confirm(`Start task ${taskId}? This will stop any currently running task.`)) return;
+
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/start`, { method: 'POST' });
+                const data = await res.json();
+
+                if (data.status === 'started' || data.status === 'already_running') {
+                    fetchTasks();
+                    loadTaskFrontend(taskId);
+
+                    // Auto-collapse sidebar when task starts
+                    setTimeout(() => {
+                        if (!sidebarCollapsed) {
+                            toggleSidebar();
+                        }
+                    }, 800);
+                }
+            } catch (e) {
+                alert("Failed to start task: " + e);
+            }
+        }
+
+        function loadTaskFrontend(taskId) {
+            const container = document.getElementById('activeTaskContainer');
+            const frame = document.getElementById('taskFrame');
+            const placeholder = document.getElementById('placeholderText');
+            const spinner = document.getElementById('loadingSpinner');
+            const retryText = document.getElementById('retryCount');
+            const title = document.getElementById('taskTitle');
+
+            // Hide title when loading task
+            title.style.display = 'none';
+
+            placeholder.style.display = 'none';
+            frame.classList.add('hidden');
+
+            // Force clear the iframe completely
+            frame.src = 'about:blank';
+
+            spinner.classList.remove('hidden');
+            spinner.classList.add('flex');
+
+            // Use host from config, add timestamp to avoid caching
+            const timestamp = new Date().getTime();
+            const baseUrl = `http://${CONFIG.server.host}:${CONFIG.taskUi.port}`;
+            const targetUrl = `${baseUrl}?t=${timestamp}`;
+
+            retryText.innerHTML = ''; // Clear text output
+            console.log(`Waiting for frontend at ${baseUrl}...`);
+
+            let attempts = 0;
+            const maxAttempts = 60; // Max attempts 30 seconds
+
+            const checkFrontend = async () => {
+                attempts++;
+
+                if (attempts > maxAttempts) {
+                    console.error("Frontend failed to start after 30 seconds");
+                    spinner.classList.remove('flex');
+                    spinner.classList.add('hidden');
+                    retryText.innerHTML = '<div style="color: #ef4444; text-align: center;">Failed to load task UI</div>';
+                    return;
+                }
+
+                try {
+                    // Use no-cors mode to check if service is online (avoids CORS blocking)
+                    const response = await fetch(baseUrl, {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-store'
+                    });
+
+                    // In no-cors mode, response.type is 'opaque', status is 0
+                    // As long as fetch doesn't throw an exception, service is online
+                    if (response.ok || response.type === 'opaque') {
+                        console.log("Frontend Ready!");
+
+                        // Clear old iframe
+                        frame.src = '';
+
+                        setTimeout(() => {
+                            // Load new URL
+                            frame.src = targetUrl;
+
+                            frame.onload = () => {
+                                console.log("Iframe loaded successfully");
+                                setTimeout(() => {
+                                    spinner.classList.remove('flex');
+                                    spinner.classList.add('hidden');
+                                    frame.classList.remove('hidden');
+                                }, 300);
+                            };
+
+                            // Set timeout to prevent onload from never triggering
+                            setTimeout(() => {
+                                if (frame.classList.contains('hidden')) {
+                                    console.log("Force showing iframe after timeout");
+                                    spinner.classList.remove('flex');
+                                    spinner.classList.add('hidden');
+                                    frame.classList.remove('hidden');
+                                }
+                            }, 3000);
+                        }, 500);
+                    } else {
+                        throw new Error('Not ready');
+                    }
+
+                } catch (e) {
+                    console.log(`Attempt ${attempts}/${maxAttempts}: Frontend not ready yet...`);
+                    setTimeout(checkFrontend, 500);
+                }
+            };
+
+            // Wait 10 seconds before starting to check, giving old UI time to shut down
+            setTimeout(checkFrontend, 10000);
+        }
+
+        // Initialize
+        (async () => {
+            await loadConfig();
+            fetchTasks();
+            setInterval(fetchTasks, 5000);
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+{
+    "name": "Liposome Generation",
+    "description": "Automated liposome generation with pressure optimization logic.",
+    "entry_point": "logic.py",
+    "version": "1.0.0",
+    "config": {
+        "llm": {
+            "model": "qwen3.5-27b",
+            "model_server": "http://127.0.0.1:1234/v1",
+            "api_key": "EMPTY"
+        },
+        "lmstudio": {
+            "load_model": "rx0/qwen3.5-27b@q4_k_m"
+        },
+        "agent": {
+            "system_message": "You are a microfluidics assistant that helps scientists do experiments. Only say the content within quote the steps,make sure to follow the steps exactly,must use tool if mentioned./no_think"
+        },
+        "detection_model": {
+            "path": "lip.engine"
+        }
+    }
+}

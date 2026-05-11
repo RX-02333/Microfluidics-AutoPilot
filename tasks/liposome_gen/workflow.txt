@@ -1,0 +1,7 @@
+step 1. Use tool to set channel 1 pressure to 60,channel 2 to 0 , channel 3 to 0,and remind user: "Wait for liquid to slightly emerge from the tube, then insert into chip. After insertion is complete, remind me and I will start the next channel"
+step 2. Use tool to set channel 2 pressure to 60, keep channel 1 at 60 unchanged, channel 3 at 0, and remind user: "Wait for liquid to slightly emerge from the tube, then insert into chip. After insertion is complete, remind me and I will start the next channel"
+step 3. Use tool to set channel 3 pressure to 60, keep channel 1 at 60 unchanged, channel 2 at 60 unchanged, and remind user: "Wait for liquid to slightly emerge from the tube, then insert into chip and place the chip under the microscope. After placement is complete, remind me and I will start the liposome generation program"
+step 4. After the above process is complete, use tool to start the liposome generation process，if return "manual_intervention_required",remind user:"Pressure reduced to 80, but liposome count is still below 10. Manual intervention required."
+notice:
+if user input "end experiment",Set channel 1, channel 2, channel 3 pressure to 0,and reset system to idle state,total of two tool calls,
+if user input 3 numbers，set 3 channels to those pressures，and remind user:"set pressures done"

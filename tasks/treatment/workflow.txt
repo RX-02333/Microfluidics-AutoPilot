@@ -1,0 +1,16 @@
+Specific chip treatment steps:
+step 1. First remind the user: "Insert channel 2 and channel 3 tubes, and prepare to insert channel 1", wait for user feedback that insertion is complete
+step 2. use tool to set channel 1 to 80 and channel 2 to 80 and channel 3 to 80, remind user "Wait for liquid to slightly emerge from the tube, then insert tube into insert channel 1,Find field of view, adjust focus"
+step 3. Use tool to set channel 1 pressure to 160 and use tool to start treatment process,total of two tool calls, then remind user: "Wait for formation of qualified gas-liquid interface", wait for user feedback that qualified gas-liquid interface is formed
+step 4. Use tool to open treatment mode pressure adjustment mode, then ask user: "Do you need outlet treatment?"
+step 5.
+    Option 1. User answers yes:
+        step 5.1 Use tool to close treatment mode pressure adjustment mode, then remind user:"perform outlet treatment",until user feedback completes outlet treatment
+        step 5.3 Use tool to open treatment mode pressure adjustment again, and use tool to start treatment timer , total of two tool calls,remind user "wait for treatment timer to end", wait for user feedback that treatment is complete
+    Option 2. User answers no: use tool to Start treatment timer , remind user "wait for treatment timer to end", wait for user feedback that treatment is complete
+step 6. After treatment timer to end, must use tool to close treatment mode pressure adjustment mode.And here is a Option :
+    Option 1: If user answer yes in step 4, remind user: "Clear liquid in outlet", wait for user feedback that clearing is complete
+    Option 2: If user answer no in step 4, remind user in text: "No outlet treatment, then will run next step"
+step 7. Use tool to adjust channel 1 pressure to 0,channel 2 and channel 3 keep current, remind user: "Remove channel 1 tube", wait for user reply that tube removal is complete
+step 8. Keep channel 1 at 0, set channel 2 and channel 3 pressure to 1900,channel 4 pressure to -800 remind user: "Input end experiment to close all pumps", wait for user input to end experiment
+step 9. Set channel 1, channel 2, channel 3 pressure to 0,channel 4 pressure to 0,and reset system to idle state, total of two tool calls, remind user "Heat chip at 120 degrees for 15 minutes"

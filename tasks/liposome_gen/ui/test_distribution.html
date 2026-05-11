@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Size Distribution Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Size Distribution Component Test</h1>
+
+        <!-- Test Container -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Live Preview</h2>
+            <div id="root" style="height: 400px;"></div>
+        </div>
+
+        <!-- Sample Data Display -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Sample Data</h2>
+            <pre id="dataDisplay" class="bg-gray-50 p-4 rounded text-sm overflow-auto"></pre>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = window.Recharts;
+
+        // Mock data generator
+        const generateMockData = () => {
+            const sizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            return sizes.map(size => ({
+                size: `${size}μm`,
+                count: Math.floor(Math.random() * 50) + 10
+            }));
+        };
+
+        const VesicleDistribution = () => {
+            const [data, setData] = useState(generateMockData());
+            const [total, setTotal] = useState(0);
+            const [avgCount, setAvgCount] = useState(0);
+
+            useEffect(() => {
+                // Update data every 2 seconds to simulate real-time updates
+                const interval = setInterval(() => {
+                    const newData = generateMockData();
+                    setData(newData);
+
+                    const counts = newData.map(d => d.count);
+                    const totalCount = counts.reduce((a, b) => a + b, 0);
+                    const avg = counts.length > 0 ? (totalCount / counts.length).toFixed(1) : 0;
+
+                    setTotal(totalCount);
+                    setAvgCount(avg);
+
+                    // Display data in the pre tag
+                    document.getElementById('dataDisplay').textContent = JSON.stringify(newData, null, 2);
+                }, 2000);
+
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <div className="h-full flex flex-col bg-white rounded-lg p-4">
+                    <div className="mb-3">
+                        <h3 className="text-base font-semibold text-gray-800 mb-2">Size Distribution</h3>
+                        <div className="flex gap-4 text-xs text-gray-600">
+                            <span>Total: <strong className="text-gray-900">{total}</strong></span>
+                            <span>Avg Count: <strong className="text-gray-900">{avgCount}</strong></span>
+                        </div>
+                    </div>
+                    <div className="flex-1 min-h-0">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                <XAxis
+                                    dataKey="size"
+                                    tick={{ fill: '#6b7280', fontSize: 11 }}
+                                    stroke="#d1d5db"
+                                />
+                                <YAxis
+                                    tick={{ fill: '#6b7280', fontSize: 11 }}
+                                    stroke="#d1d5db"
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'white',
+                                        border: '1px solid #e5e7eb',
+                                        borderRadius: '6px',
+                                        fontSize: '12px'
+                                    }}
+                                />
+                                <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the component
+        ReactDOM.render(<VesicleDistribution />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>

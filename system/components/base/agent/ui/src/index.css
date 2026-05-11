@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.video-section {
+  flex: 1;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-section {
+  flex: 1;
+  width: 100%;
+  background: #fff;
+  border-left: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
