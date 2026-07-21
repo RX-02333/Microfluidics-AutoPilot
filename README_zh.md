@@ -187,6 +187,16 @@ npm install
 
 **`tasks/common_config.json`** — 所有 Task 共享的硬件和网络配置：
 
+#### 当前硬件型号
+
+| 设备 | 型号 |
+|---|---|
+| 气压泵 | FluidicLab PC1 |
+| 显微镜 | Olympus IX83 |
+| 相机 | ToupTek VTP23-M |
+
+当前 Component 实现面向以上硬件型号。若使用其他硬件型号，需要在 `system/components/base/` 中修改或新增对应驱动，并确保实现符合相应抽象接口。气压控制器必须符合 `system/components/base/pressure/base.py` 中的 `BasePressureController`，相机必须符合 `system/components/base/camera/base.py` 中的 `BaseCamera`。显微镜目前作为实验平台记录；如果需要对其他型号显微镜进行软件控制，应先在同一 Component 层定义并实现相应抽象接口，再接入 Task 逻辑。
+
 ```json
 {
     "camera": {
