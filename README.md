@@ -194,7 +194,7 @@ After selecting a model, configure the following parameters in the **Inference**
 | Microscope | Olympus IX83 |
 | Camera | ToupTek VTP23-M |
 
-The current component implementations are written for the hardware models listed above. To use a different hardware model, modify or add its driver under `system/components/base/` and keep the implementation compliant with the corresponding abstract interface. Pressure controller implementations must conform to `BasePressureController` in `system/components/base/pressure/base.py`, and camera implementations must conform to `BaseCamera` in `system/components/base/camera/base.py`. The microscope is currently recorded as the experimental platform; if software control is added for another microscope, define its component abstraction and implementation under the same component layer before connecting it to Task logic.
+The current component implementations are written for the hardware models listed above. To use a different hardware model, modify or add its driver under `system/components/base/` and keep the implementation compliant with the corresponding abstract interface. Pressure controller implementations must conform to `BasePressureController` in `system/components/base/pressure/base.py`, and camera implementations must conform to `BaseCamera` in `system/components/base/camera/base.py`. The Olympus IX83 is recorded only as the microscope platform and does not require a separate software-control abstraction.
 
 ```json
 {
