@@ -219,7 +219,8 @@ The current component implementations are written for the hardware models listed
 > - `server.host` in `system/server/static/config.json`
 > - `camera.rtsp_url`, the RTSP URL inside `camera.ffmpeg_command`, and `server.host` in `tasks/common_config.json`
 > - `server.host` and proxy `target` addresses in each `tasks/*/ui/vite.config.js`
-> Also allow ports `8000`, `8001`, `8002`, `8501`, and `8554` through the firewall.
+> - The `VideoStream` source in `tasks/liposome_gen/ui/src/App.jsx` and `tasks/treatment/ui/src/App.jsx`
+> Also allow TCP ports `8000`, `8001`, `8002`, `8501`, `8554`, and `8889`, together with UDP port `8189`, through the firewall.
 
 ### Task Config
 
@@ -267,9 +268,22 @@ Each Task directory contains a **`task.json`** that defines the task name, LLM c
 
 ## Running the System
 
+### Start MediaMTX
+
+MediaMTX is required for camera streaming. Download and extract the Windows package from the [MediaMTX releases page](https://github.com/bluenviron/mediamtx/releases), then start it in a separate PowerShell terminal before starting this system:
+
+```powershell
+cd C:\path\to\mediamtx
+.\mediamtx.exe
+```
+
+Keep this terminal running while the system is in use. With the default MediaMTX configuration, FFmpeg publishes the camera stream to `rtsp://127.0.0.1:8554/test`, and the Task UI reads it through WebRTC at `http://127.0.0.1:8889/test`.
+
 ### Quick Start
 
-```bash
+Open a second PowerShell terminal and start the main system:
+
+```powershell
 cd new_system
 
 # Make sure the conda environment is activated
@@ -283,16 +297,18 @@ Open `http://127.0.0.1:8000` in a browser to access the Microfluidics AutoPilot 
 
 ### Startup Flow
 
-1. **`start_system.py`** starts the FastAPI main server (port 8000)
-2. The dashboard displays all available Tasks
-3. Click the **Start** button on a Task card to launch the corresponding task
-4. The Engine launches the Task's `logic.py` as a **subprocess**
-5. The Task subprocess automatically starts:
+1. **MediaMTX** starts the RTSP service on port `8554` and the WebRTC service on port `8889`
+2. **`start_system.py`** starts the FastAPI main server (port 8000)
+3. The dashboard displays all available Tasks
+4. Click the **Start** button on a Task card to launch the corresponding task
+5. The Engine launches the Task's `logic.py` as a **subprocess**
+6. The Task subprocess automatically starts:
    - LM Studio model loading (if `lmstudio.load_model` is configured)
    - Agent Server (port 8001)
    - Task API Server (port 8002)
    - Task UI dev server (port 8501)
-6. The dashboard automatically redirects to the Task UI page
+   - Camera capture and FFmpeg publishing to MediaMTX
+7. The dashboard automatically redirects to the Task UI page
 
 ### Start a Single Task (for debugging)
 

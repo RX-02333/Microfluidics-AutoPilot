@@ -220,7 +220,8 @@ npm install
 > - `system/server/static/config.json` 中的 `server.host`
 > - `tasks/common_config.json` 中的 `camera.rtsp_url`、`camera.ffmpeg_command` 内的 RTSP 地址和 `server.host`
 > - 各个 `tasks/*/ui/vite.config.js` 中的 `server.host` 和代理 `target` 地址
-> 同时确认防火墙放行 `8000`、`8001`、`8002`、`8501`、`8554` 端口。
+> - `tasks/liposome_gen/ui/src/App.jsx` 和 `tasks/treatment/ui/src/App.jsx` 中的 `VideoStream` 地址
+> 同时确认防火墙放行 TCP 端口 `8000`、`8001`、`8002`、`8501`、`8554`、`8889`，以及 UDP 端口 `8189`。
 
 ### Task 配置
 
@@ -268,9 +269,22 @@ npm install
 
 ## 启动系统
 
+### 启动 MediaMTX
+
+相机视频流依赖 MediaMTX。请先从 [MediaMTX Releases 页面](https://github.com/bluenviron/mediamtx/releases) 下载并解压 Windows 版本，然后在单独的 PowerShell 终端中启动：
+
+```powershell
+cd C:\path\to\mediamtx
+.\mediamtx.exe
+```
+
+系统运行期间需要保持此终端运行。使用 MediaMTX 默认配置时，FFmpeg 将相机视频流发布到 `rtsp://127.0.0.1:8554/test`，Task UI 通过 `http://127.0.0.1:8889/test` 读取 WebRTC 视频流。
+
 ### 快速启动
 
-```bash
+打开第二个 PowerShell 终端并启动主系统：
+
+```powershell
 cd new_system
 
 # 确保 conda 环境已激活
@@ -284,16 +298,18 @@ python start_system.py
 
 ### 启动流程
 
-1. **`start_system.py`** 启动 FastAPI 主服务（端口 8000）
-2. 仪表板页面展示所有可用 Task
-3. 点击 Task 卡片的 **Start** 按钮启动对应任务
-4. Engine 以**子进程**方式启动 Task 的 `logic.py`
-5. Task 子进程内部自动启动：
+1. **MediaMTX** 启动 `8554` 端口的 RTSP 服务和 `8889` 端口的 WebRTC 服务
+2. **`start_system.py`** 启动 FastAPI 主服务（端口 8000）
+3. 仪表板页面展示所有可用 Task
+4. 点击 Task 卡片的 **Start** 按钮启动对应任务
+5. Engine 以**子进程**方式启动 Task 的 `logic.py`
+6. Task 子进程内部自动启动：
    - LM Studio 模型加载（如果配置了 `lmstudio.load_model`）
    - Agent Server（端口 8001）
    - Task API Server（端口 8002）
    - Task UI 开发服务器（端口 8501）
-6. 仪表板自动跳转到 Task UI 页面
+   - 相机采集及 FFmpeg 向 MediaMTX 推流
+7. 仪表板自动跳转到 Task UI 页面
 
 ### 单独启动某个 Task（调试用）
 
