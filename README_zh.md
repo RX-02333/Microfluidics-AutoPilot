@@ -195,7 +195,7 @@ npm install
 | 显微镜 | Olympus IX83 |
 | 相机 | ToupTek VTP23-M |
 
-当前 Component 实现面向以上硬件型号。若使用其他硬件型号，需要在 `system/components/base/` 中修改或新增对应驱动，并确保实现符合相应抽象接口。气压控制器必须符合 `system/components/base/pressure/base.py` 中的 `BasePressureController`，相机必须符合 `system/components/base/camera/base.py` 中的 `BaseCamera`。Olympus IX83 仅作为显微镜平台记录，不需要单独定义软件控制抽象接口。
+当前 Component 实现面向以上硬件型号。若使用其他硬件型号，需要在 `system/components/base/` 中修改或新增对应驱动，并确保实现符合相应抽象接口。气压控制器必须符合 `system/components/base/pressure/base.py` 中的 `BasePressureController`，相机必须符合 `system/components/base/camera/base.py` 中的 `BaseCamera`。
 
 ```json
 {
