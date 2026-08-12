@@ -60,10 +60,12 @@ pip install -r requirement.txt
 如需重新生成 TensorRT engine，请激活项目环境，并在项目根目录执行：
 
 ```bash
-yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0 half=False nms=True conf=0.55 iou=0.7 max_det=300
 yolo export model=tasks/treatment/channel.pt format=engine imgsz=640 batch=1 device=0
 yolo export model=tasks/treatment/interface.pt format=engine imgsz=640 batch=1 device=0
 ```
+
+脂质体检测 engine 使用 `nms=True` 将 NMS 集成到 TensorRT 模型中，以避免运行时对原始候选框执行完整的 Ultralytics NMS。`conf=0.55`、`iou=0.7` 和 `max_det=300` 会在导出时固化到 engine；修改这些检测参数后需要重新导出 `lip.engine`。系统通过 Ultralytics `YOLO` API 加载 engine，并继续从 `Results.boxes` 读取检测结果，因此现有脂质体检测代码无需修改。
 
 Ultralytics 会在源 `.pt` 文件所在目录生成同名 `.engine` 文件。导出过程需要 NVIDIA GPU 以及相互兼容的 CUDA/TensorRT 环境。TensorRT engine 默认与构建平台、TensorRT 版本和 GPU 架构相关；如果部署电脑的环境不同，应在该电脑上使用对应 `.pt` 权重重新生成 engine。
 

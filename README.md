@@ -59,10 +59,12 @@ The repository includes the original Ultralytics PyTorch weights and their corre
 To regenerate the TensorRT engines, activate the project environment and run the following commands from the repository root:
 
 ```bash
-yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0 half=False nms=True conf=0.55 iou=0.7 max_det=300
 yolo export model=tasks/treatment/channel.pt format=engine imgsz=640 batch=1 device=0
 yolo export model=tasks/treatment/interface.pt format=engine imgsz=640 batch=1 device=0
 ```
+
+The liposome detection engine uses `nms=True` to integrate NMS into the TensorRT model, avoiding full Ultralytics NMS over raw candidate boxes at runtime. The `conf=0.55`, `iou=0.7`, and `max_det=300` values are fixed when the engine is exported; regenerate `lip.engine` after changing any of these detection parameters. The system loads the engine through the Ultralytics `YOLO` API and continues to read detections from `Results.boxes`, so the existing liposome detection code does not require changes.
 
 Ultralytics writes each `.engine` file next to its source `.pt` file with the same base name. Export requires an NVIDIA GPU and a compatible CUDA/TensorRT environment. TensorRT engines are tied to their build platform, TensorRT version, and GPU architecture by default, so regenerate them from the `.pt` weights on the deployment computer when the environment differs.
 
