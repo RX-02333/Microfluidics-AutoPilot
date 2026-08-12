@@ -33,6 +33,16 @@ tasks/*/ui/dist/
 # Logs
 *.log
 
+# Local benchmark scripts and artifacts
+/benchmark_lip_yolo.py
+benchmark_output/
+/recording_100805_60s.mp4
+
+# Local image annotation script, inputs, and outputs
+/annotate_lip_images.py
+lip_image_input/
+lip_image_output/
+
 # TensorRT engines are versioned through Git LFS (see .gitattributes)
 
 # Misc
