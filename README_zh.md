@@ -11,6 +11,7 @@
 - [安装指南](#安装指南)
   - [1. 克隆项目](#1-克隆项目)
   - [2. Python 环境](#2-python-环境)
+    - [2.1 将 YOLO 模型导出为 TensorRT](#21-将-yolo-模型导出为-tensorrt)
   - [3. Node.js 环境](#3-nodejs-环境)
   - [4. LM Studio 安装与模型下载](#4-lm-studio-安装与模型下载)
 - [配置说明](#配置说明)
@@ -45,6 +46,26 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 # 安装项目依赖
 pip install -r requirement.txt
 ```
+
+#### 2.1 将 YOLO 模型导出为 TensorRT
+
+仓库中包含 Ultralytics PyTorch 原始权重及其对应的 TensorRT engine：
+
+| 任务 | PyTorch 权重 | TensorRT engine |
+|---|---|---|
+| 脂质体检测 | `tasks/liposome_gen/lip.pt` | `tasks/liposome_gen/lip.engine` |
+| 通道检测 | `tasks/treatment/channel.pt` | `tasks/treatment/channel.engine` |
+| 界面检测 | `tasks/treatment/interface.pt` | `tasks/treatment/interface.engine` |
+
+如需重新生成 TensorRT engine，请激活项目环境，并在项目根目录执行：
+
+```bash
+yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/treatment/channel.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/treatment/interface.pt format=engine imgsz=640 batch=1 device=0
+```
+
+Ultralytics 会在源 `.pt` 文件所在目录生成同名 `.engine` 文件。导出过程需要 NVIDIA GPU 以及相互兼容的 CUDA/TensorRT 环境。TensorRT engine 默认与构建平台、TensorRT 版本和 GPU 架构相关；如果部署电脑的环境不同，应在该电脑上使用对应 `.pt` 权重重新生成 engine。
 
 ### 3. Node.js 环境
 

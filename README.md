@@ -9,6 +9,7 @@ An LLM Agent-driven automated control system for microfluidic experiments. The s
 - [Installation Guide](#installation-guide)
   - [1. Clone the Repository](#1-clone-the-repository)
   - [2. Python Environment](#2-python-environment)
+    - [2.1 Export YOLO Models to TensorRT](#21-export-yolo-models-to-tensorrt)
   - [3. Node.js Environment](#3-nodejs-environment)
   - [4. LM Studio Setup & Model Download](#4-lm-studio-setup--model-download)
 - [Configuration](#configuration)
@@ -44,6 +45,26 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 # Install project dependencies
 pip install -r requirement.txt
 ```
+
+#### 2.1 Export YOLO Models to TensorRT
+
+The repository includes the original Ultralytics PyTorch weights and their corresponding TensorRT engines:
+
+| Task | PyTorch weights | TensorRT engine |
+|---|---|---|
+| Liposome detection | `tasks/liposome_gen/lip.pt` | `tasks/liposome_gen/lip.engine` |
+| Channel detection | `tasks/treatment/channel.pt` | `tasks/treatment/channel.engine` |
+| Interface detection | `tasks/treatment/interface.pt` | `tasks/treatment/interface.engine` |
+
+To regenerate the TensorRT engines, activate the project environment and run the following commands from the repository root:
+
+```bash
+yolo export model=tasks/liposome_gen/lip.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/treatment/channel.pt format=engine imgsz=640 batch=1 device=0
+yolo export model=tasks/treatment/interface.pt format=engine imgsz=640 batch=1 device=0
+```
+
+Ultralytics writes each `.engine` file next to its source `.pt` file with the same base name. Export requires an NVIDIA GPU and a compatible CUDA/TensorRT environment. TensorRT engines are tied to their build platform, TensorRT version, and GPU architecture by default, so regenerate them from the `.pt` weights on the deployment computer when the environment differs.
 
 ### 3. Node.js Environment
 
