@@ -121,11 +121,18 @@ class BaseTaskLogic:
             if os.path.exists(mcp_path):
                 server_cfg = self.config.get('server', {})
                 api_url = f"http://{server_cfg.get('host', 'localhost')}:{server_cfg.get('api_port', 8002)}"
+                mcp_env = os.environ.copy()
+                existing_pythonpath = mcp_env.get("PYTHONPATH")
+                mcp_env["PYTHONPATH"] = (
+                    PROJECT_ROOT + os.pathsep + existing_pythonpath
+                    if existing_pythonpath else PROJECT_ROOT
+                )
                 tools = [{
                     "mcpServers": {
                         "task_control": {
-                            "command": "python",
-                            "args": [mcp_path, "--api-url", api_url]
+                            "command": sys.executable,
+                            "args": [mcp_path, "--api-url", api_url],
+                            "env": mcp_env
                         }
                     }
                 }]
