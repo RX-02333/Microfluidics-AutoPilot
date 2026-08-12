@@ -2,6 +2,7 @@
 from fastmcp import FastMCP
 import requests
 import argparse
+import sys
 
 
 def create_mcp_server(name: str = "task_tools"):
@@ -27,7 +28,7 @@ def create_mcp_server(name: str = "task_tools"):
     args = parser.parse_args()
     
     api_url = args.api_url
-    print(f"[MCP {name}] API URL: {api_url}")
+    print(f"[MCP {name}] API URL: {api_url}", file=sys.stderr)
     
     mcp = FastMCP(name)
     return mcp, api_url
