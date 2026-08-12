@@ -33,8 +33,7 @@ tasks/*/ui/dist/
 # Logs
 *.log
 
-# TensorRT engines (too large, machine-specific)
-*.engine
+# TensorRT engines are versioned through Git LFS (see .gitattributes)
 
 # Misc
 .env
